@@ -13,6 +13,8 @@ import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
 public class Game extends Application {
+	
+  private Player player1, player2;
 
   private final static int WIDTH = 600;
   private final static int HEIGHT = 600;
