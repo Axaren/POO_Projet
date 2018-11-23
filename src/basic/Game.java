@@ -1,23 +1,32 @@
 package basic;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 
 public class Game extends Application {
 	
   private Player player1, player2;
 
-  private final static int WIDTH = 600;
+  private final static int WIDTH = 800;
   private final static int HEIGHT = 600;
+
+  private Image background;
+  private ArrayList<Sprite> sprites;
 
   public static String getRessourcePathByName(String name) {
     return Game.class.getResource('/' + name).toString();
@@ -43,6 +52,11 @@ public class Game extends Application {
     gc.setStroke(Color.RED);
     gc.setLineWidth(1);
 
+    background = new Image(getRessourcePathByName("images/space.jpg"), WIDTH, HEIGHT, false, false);
+    sprites = new ArrayList<>();
+
+
+
     stage.setScene(scene);
     stage.show();
 
@@ -54,5 +68,15 @@ public class Game extends Application {
 
     scene.setOnKeyPressed(e -> {
     });
+
+    new AnimationTimer() {
+      public void handle(long arg0) {
+        gc.drawImage(background, 0, 0);
+
+        Collections.sort(sprites);
+        sprites.forEach(s -> s.render(gc));
+
+      }
+    }.start();
   }
 }

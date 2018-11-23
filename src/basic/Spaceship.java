@@ -6,6 +6,7 @@ public class Spaceship {
   private double speed;
   private double creationTime;
   private int attackPower;
+  private RectangleSprite sprite;
 
   public Spaceship(double speed, double creationTime, int attackPower) {
     this.speed = speed;

@@ -1,42 +1,15 @@
 package basic;
 
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.Image;
-import javafx.scene.input.KeyCode;
 
-public class Sprite {
+public abstract class Sprite implements Comparable<Sprite> {
 
-  private Image image;
-  private double x;
-  private double y;
+  protected double x;
+  protected double y;
+  private int z;
   private double xSpeed;
   private double ySpeed;
-  private double width;
-  private double height;
-  private double maxX;
-  private double maxY;
 
-  public Sprite(String path, double width, double height) {
-    image = new Image(path, width, height, false, false);
-    this.width = width;
-    this.height = height;
-  }
-
-  public Sprite(Sprite s) {
-    image = s.image;
-    width = s.width;
-    height = s.height;
-    maxX = s.maxX;
-    maxY = s.maxY;
-  }
-
-  public double width() {
-    return width;
-  }
-
-  public double height() {
-    return height;
-  }
 
   public void setPosition(double x, double y) {
     this.x = x;
@@ -53,17 +26,20 @@ public class Sprite {
     y += ySpeed;
   }
 
-  public void render(GraphicsContext gc) {
-    gc.drawImage(image, x, y);
+  public Sprite(double x, double y, int z) {
+    this.x = x;
+    this.y = y;
+    this.z = z;
   }
 
-  public boolean intersects(Sprite s) {
-    return ((x >= s.x && x <= s.x + s.width) || (s.x >= x && s.x <= x + width))
-        && ((y >= s.y && y <= s.y + s.height) || (s.y >= y && s.y <= y + height));
-  }
+  public abstract void render(GraphicsContext gc);
 
   public String toString() {
     return "Sprite<" + x + ", " + y + ">";
   }
 
+  @Override
+  public int compareTo(Sprite sprite) {
+    return this.z - sprite.z;
+  }
 }
