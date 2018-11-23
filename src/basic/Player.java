@@ -19,6 +19,14 @@ public class Player {
     this.controlledSquads = new ArrayList<>();
   }
 
+  public Color getColor() {
+    return color;
+  }
+
+  public PlayerType getType() {
+    return type;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {

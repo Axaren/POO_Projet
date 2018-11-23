@@ -1,5 +1,6 @@
 package basic;
 
+import basic.Player.PlayerType;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -26,7 +27,7 @@ public class Game extends Application {
   private final static int HEIGHT = 600;
 
   private Image background;
-  private ArrayList<Sprite> sprites;
+  private ArrayList<GameObject> objects;
 
   public static String getRessourcePathByName(String name) {
     return Game.class.getResource('/' + name).toString();
@@ -48,12 +49,13 @@ public class Game extends Application {
 
     GraphicsContext gc = canvas.getGraphicsContext2D();
     gc.setFont(Font.font("Helvetica", FontWeight.BOLD, 24));
-    gc.setFill(Color.BISQUE);
+    gc.setFill(Color.RED);
     gc.setStroke(Color.RED);
     gc.setLineWidth(1);
 
     background = new Image(getRessourcePathByName("images/space.jpg"), WIDTH, HEIGHT, false, false);
-    sprites = new ArrayList<>();
+    objects = new ArrayList<>();
+    objects.add(new Planet(50, 100, 100));
 
 
 
@@ -73,8 +75,8 @@ public class Game extends Application {
       public void handle(long arg0) {
         gc.drawImage(background, 0, 0);
 
-        Collections.sort(sprites);
-        sprites.forEach(s -> s.render(gc));
+        Collections.sort(objects);
+        objects.forEach(s -> s.render(gc));
 
       }
     }.start();

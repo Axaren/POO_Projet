@@ -1,20 +1,32 @@
 package basic;
 
-public class Planet {
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
+
+public class Planet extends GameObject {
+
+  static final Color DEFAULT_COLOR = Color.BROWN;
 
   private int radius;
   private int nbSpaceship;
   private int power;
   private Player player;
-  private Sprite sprite;
   private int productionRate;
 
   public Planet(int radius, Player player, int xPos, int yPos) {
+    super(new CircleSprite(xPos, yPos, 0, radius, player.getColor()));
     this.radius = radius;
     this.player = player;
     this.nbSpaceship = 0;
     this.productionRate = radius * 2;
+  }
 
+  public Planet(int radius, int xPos, int yPos) {
+    super(new CircleSprite(xPos, yPos, 0, radius, DEFAULT_COLOR));
+    this.radius = radius;
+    this.player = null;
+    this.nbSpaceship = 0;
+    this.productionRate = radius * 2;
   }
 
   @Override
@@ -82,4 +94,8 @@ public class Planet {
     this.productionRate = productionRate;
   }
 
+  @Override
+  public void render(GraphicsContext gc) {
+    sprite.render(gc);
+  }
 }
