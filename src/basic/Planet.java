@@ -2,6 +2,8 @@ package basic;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 
 public class Planet extends GameObject {
 
@@ -97,5 +99,17 @@ public class Planet extends GameObject {
   @Override
   public void render(GraphicsContext gc) {
     sprite.render(gc);
+    renderPower(gc);
+  }
+
+  private void renderPower(GraphicsContext gc) {
+    gc.setFont(Font.font("Helvetica", FontWeight.BOLD, 24));
+    gc.setFill(Color.BISQUE);
+    gc.setStroke(Color.RED);
+    gc.setLineWidth(1);
+    double textXPos = sprite.x + (double) radius / 2 - 5;
+    double textYPos = sprite.y + (double) radius / 2 + 10;
+    gc.fillText(String.valueOf(power), textXPos, textYPos);
+    gc.strokeText(String.valueOf(power), textXPos, textYPos);
   }
 }

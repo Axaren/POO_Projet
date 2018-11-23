@@ -55,7 +55,7 @@ public class Game extends Application {
 
     background = new Image(getRessourcePathByName("images/space.jpg"), WIDTH, HEIGHT, false, false);
     objects = new ArrayList<>();
-    objects.add(new Planet(50, 100, 100));
+    objects.add(new Planet(100, 200, 200));
 
 
 
