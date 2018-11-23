@@ -3,23 +3,13 @@ package basic;
 
 public class Spaceship {
 
-  private double speed;
+  static double speed = 10;
   private double creationTime;
-  private int attackPower;
+  static int attackPower = 10;
   private RectangleSprite sprite;
 
-  public Spaceship(double speed, double creationTime, int attackPower) {
-    this.speed = speed;
+  public Spaceship(double creationTime) {
     this.creationTime = creationTime;
-    this.attackPower = attackPower;
-  }
-
-  public double getSpeed() {
-    return speed;
-  }
-
-  public void setSpeed(double speed) {
-    this.speed = speed;
   }
 
   public double getCreationTime() {
@@ -28,13 +18,5 @@ public class Spaceship {
 
   public void setCreationTime(double creationTime) {
     this.creationTime = creationTime;
-  }
-
-  public int getAttackPower() {
-    return attackPower;
-  }
-
-  public void setAttackPower(int attackPower) {
-    this.attackPower = attackPower;
   }
 }

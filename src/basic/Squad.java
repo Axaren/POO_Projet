@@ -21,4 +21,9 @@ public class Squad {
       this.destination = destination;
     }
   }
+  
+  public ArrayList<Spaceship> getSpaceships() {
+	    return spaceships;
+	  }
+
 }

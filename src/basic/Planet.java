@@ -1,5 +1,7 @@
 package basic;
 
+import java.util.ArrayList;
+
 public class Planet {
 
   private int radius;
@@ -14,7 +16,6 @@ public class Planet {
     this.player = player;
     this.nbSpaceship = 0;
     this.productionRate = radius * 2;
-
   }
 
   @Override
@@ -82,4 +83,17 @@ public class Planet {
     this.productionRate = productionRate;
   }
 
+  //Production d'un vaisseau dans la planète
+  public void productionSpaceship(){
+  	this.nbSpaceship++;
+  	this.power += Spaceship.attackPower;
+  }
+  
+  //Création d'un vaisseau pour décollage
+  public void creationSpaceship(Squad squad){
+		  nbSpaceship -= squad.getSpaceships().size();
+		  power -= Spaceship.attackPower*squad.getSpaceships().size();
+  }
+  
+  
 }
