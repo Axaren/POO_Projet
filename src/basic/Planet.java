@@ -1,15 +1,21 @@
 package basic;
 
+import com.sun.javafx.tk.FontMetrics;
+import com.sun.javafx.tk.Toolkit;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.scene.text.TextAlignment;
 
 public class Planet extends GameObject {
 
-  static final Color DEFAULT_COLOR = Color.BROWN;
+  static final Color DEFAULT_COLOR = Color.CHOCOLATE;
+  static final int MAX_RADIUS = 50;
+  static final int MIN_RADIUS = 25;
+  private final static int MIN_FONT_SIZE = 8;
+  private final static int MAX_FONT_SIZE = 20;
 
-  private int radius;
   private int nbSpaceship;
   private int power;
   private Player player;
@@ -17,7 +23,6 @@ public class Planet extends GameObject {
 
   public Planet(int radius, Player player, int xPos, int yPos) {
     super(new CircleSprite(xPos, yPos, 0, radius, player.getColor()));
-    this.radius = radius;
     this.player = player;
     this.nbSpaceship = 0;
     this.productionRate = radius * 2;
@@ -25,7 +30,6 @@ public class Planet extends GameObject {
 
   public Planet(int radius, int xPos, int yPos) {
     super(new CircleSprite(xPos, yPos, 0, radius, DEFAULT_COLOR));
-    this.radius = radius;
     this.player = null;
     this.nbSpaceship = 0;
     this.productionRate = radius * 2;
@@ -40,21 +44,25 @@ public class Planet extends GameObject {
       return false;
     }
     Planet planet = (Planet) o;
-    return radius == planet.radius &&
+    return getRadius() == planet.getRadius() &&
         nbSpaceship == planet.nbSpaceship &&
         power == planet.power &&
         productionRate == planet.productionRate &&
-        player.equals(planet.player) &&
+        (player == null && planet.player == null || (player != null && player
+            .equals(planet.player)))
+        &&
         sprite.equals(planet.sprite);
   }
 
   public int getRadius() {
-    return radius;
+    return ((CircleSprite) sprite).getRadius();
   }
 
-  public void setRadius(int radius) {
-    this.radius = radius;
+  public Color getColor() {
+    return ((CircleSprite) sprite).getColor();
   }
+
+
 
   public int getNbSpaceship() {
     return nbSpaceship;
@@ -98,18 +106,28 @@ public class Planet extends GameObject {
 
   @Override
   public void render(GraphicsContext gc) {
-    sprite.render(gc);
+    renderPlanet(gc);
     renderPower(gc);
   }
 
+  private void renderPlanet(GraphicsContext gc) {
+    sprite.render(gc);
+  }
+
   private void renderPower(GraphicsContext gc) {
-    gc.setFont(Font.font("Helvetica", FontWeight.BOLD, 24));
-    gc.setFill(Color.BISQUE);
-    gc.setStroke(Color.RED);
+    int radiusRange = MAX_RADIUS - MIN_RADIUS;
+    int fontSizeRange = MAX_FONT_SIZE - MIN_FONT_SIZE;
+    int fontSize = (((getRadius() - MIN_RADIUS) * fontSizeRange) / radiusRange) + MIN_FONT_SIZE;
+    Font powerFont = Font.font("Helvetica", FontWeight.NORMAL, fontSize);
+    FontMetrics fm = Toolkit.getToolkit().getFontLoader().getFontMetrics(powerFont);
+    gc.setFont(powerFont);
+    gc.setFill(Color.WHITE);
+    gc.setStroke(Color.WHITE);
+    gc.setTextAlign(TextAlignment.CENTER);
     gc.setLineWidth(1);
-    double textXPos = sprite.x + (double) radius / 2 - 5;
-    double textYPos = sprite.y + (double) radius / 2 + 10;
-    gc.fillText(String.valueOf(power), textXPos, textYPos);
+    int textXPos = sprite.x;
+    int textYPos = sprite.y;
+    gc.fillText(String.valueOf(power), textXPos, textYPos, getRadius());
     gc.strokeText(String.valueOf(power), textXPos, textYPos);
   }
 }

@@ -4,21 +4,23 @@ import javafx.scene.canvas.GraphicsContext;
 
 public abstract class Sprite implements Comparable<Sprite> {
 
-  protected double x;
-  protected double y;
+
+  protected int x;
+  protected int y;
   private int z;
-  private double xSpeed;
-  private double ySpeed;
+  private int xSpeed;
+  private int ySpeed;
 
 
-  public void setPosition(double x, double y) {
+  public Sprite(int x, int y, int z) {
     this.x = x;
     this.y = y;
+    this.z = z;
   }
 
-  public void setSpeed(double xSpeed, double ySpeed) {
-    this.xSpeed = xSpeed;
-    this.ySpeed = ySpeed;
+  public void setPosition(int x, int y) {
+    this.x = x;
+    this.y = y;
   }
 
   public void updatePosition() {
@@ -26,16 +28,28 @@ public abstract class Sprite implements Comparable<Sprite> {
     y += ySpeed;
   }
 
-  public Sprite(double x, double y, int z) {
-    this.x = x;
-    this.y = y;
-    this.z = z;
+  public void setSpeed(int xSpeed, int ySpeed) {
+    this.xSpeed = xSpeed;
+    this.ySpeed = ySpeed;
   }
 
   public abstract void render(GraphicsContext gc);
 
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    Sprite sprite = (Sprite) o;
+    return this.x == sprite.x
+        && this.y == sprite.y;
+  }
+
   public String toString() {
-    return "Sprite<" + x + ", " + y + ">";
+    return "Sprite<" + this.x + "," + this.y + "," + this.z + ">";
   }
 
   @Override
