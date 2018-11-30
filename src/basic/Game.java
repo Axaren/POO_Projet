@@ -28,7 +28,10 @@ public class Game extends Application {
 
   private Image background;
   private ArrayList<GameObject> objects;
-
+  private ArrayList<Planet> planets;
+  
+  private int cpt;
+  
   public static String getRessourcePathByName(String name) {
     return Game.class.getResource('/' + name).toString();
   }
@@ -54,15 +57,27 @@ public class Game extends Application {
     gc.setLineWidth(1);
 
     background = new Image(getRessourcePathByName("images/space.jpg"), WIDTH, HEIGHT, false, false);
+    Planet planet1 = new Planet(100, 200, 200);
+    Planet planet2 = new Planet(100, 300, 300);
+
     objects = new ArrayList<>();
-    objects.add(new Planet(100, 200, 200));
+    objects.add(planet1);
+    objects.add(planet2);
+    
+    planets = new ArrayList<>();
+    planets.add(planet1);
+    planets.add(planet2);
 
-
+    cpt = 0;
 
     stage.setScene(scene);
     stage.show();
 
     EventHandler<MouseEvent> mouseHandler = (e -> {
+    	for(Planet p : planets)
+    		if(p.onPlanet(e.getX(), e.getY())){
+				p.creationSpaceship();
+    		}
     });
 
     scene.setOnMouseDragged(mouseHandler);
@@ -74,6 +89,13 @@ public class Game extends Application {
     new AnimationTimer() {
       public void handle(long arg0) {
         gc.drawImage(background, 0, 0);
+        cpt++; 
+        
+        if(cpt%100==0){
+            Collections.sort(planets);
+            planets.forEach( p -> p.productionSpaceship());
+        }
+
 
         Collections.sort(objects);
         objects.forEach(s -> s.render(gc));
