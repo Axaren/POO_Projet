@@ -2,6 +2,7 @@ package basic;
 
 import java.util.ArrayList;
 import java.util.Random;
+
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.event.EventHandler;
@@ -11,6 +12,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 public class Game extends Application {
@@ -25,8 +27,10 @@ public class Game extends Application {
   private Image background;
   private ArrayList<GameObject> objects;
   private ArrayList<Planet> planets;
+  private ArrayList<Spaceship> spaceships;
   
   private int cpt;
+  private int pourcentage;
   
   /**
    * @param name File path
@@ -47,6 +51,8 @@ public class Game extends Application {
 
     Group root = new Group();
     Scene scene = new Scene(root);
+    planets = new ArrayList<>();
+    spaceships = new ArrayList<>();
     Canvas canvas = new Canvas(WIDTH, HEIGHT);
     root.getChildren().add(canvas);
 
@@ -55,23 +61,33 @@ public class Game extends Application {
     background = new Image(getRessourcePathByName("images/space.jpg"), WIDTH, HEIGHT, false, false);
 
     cpt = 0;
+    pourcentage = 0;
     
     objects = new ArrayList<>();
     planets = new ArrayList<>();
+    spaceships = new ArrayList<>();
+    
+    Spaceship s = new Spaceship(10,10, Color.RED);
+    spaceships.add(s);
     generatePlanets();
 
     stage.setScene(scene);
     stage.show();
 
     EventHandler<MouseEvent> mouseHandler = (e -> {
-    	for(Planet p : planets)
+    	/*for(Planet p : planets)
     		if(p.onPlanet(e.getX(), e.getY())){
 				p.creationSpaceship();
-    		}
+    		}*/
+  
     });
 
     scene.setOnMouseDragged(mouseHandler);
     scene.setOnMousePressed(mouseHandler);
+    
+    scene.setOnScroll(e -> {
+    	pourcentage++;
+    });
 
     scene.setOnKeyPressed(e -> {
     });
@@ -82,11 +98,24 @@ public class Game extends Application {
       private double planetProductionAcc;
 
       public void handle(long now) {
-        double delta = now - previousTime / 1_000_000_000.0;
+        double delta = (now - previousTime) / 1_000_000_000.0;
         planetProductionAcc += delta;
         gc.drawImage(background, 0, 0);
         objects.forEach(s -> s.render(gc));
+        
+        spaceships.forEach(s -> s.render(gc));
+        
+        for(Spaceship s : spaceships)
+        	s.updatePosition();
 
+        if(planetProductionAcc>=0.5){
+        	for(Planet p : planets){
+        		if(p.getPlayer() != null)
+        			p.productionSpaceship();
+        	}
+            planetProductionAcc = 0;
+        }
+        
         previousTime = now;
       }
 

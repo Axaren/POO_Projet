@@ -27,14 +27,14 @@ public class Planet extends GameObject {
     super(new CircleSprite(xPos, yPos, 0, radius, player.getColor()));
     this.player = player;
     this.nbSpaceship = 0;
-    this.productionRate = radius * 2;
+    this.productionRate = radius/10;
   }
 
   public Planet(int radius, int xPos, int yPos) {
     super(new CircleSprite(xPos, yPos, 0, radius, DEFAULT_COLOR));
     this.player = null;
     this.nbSpaceship = 0;
-    this.productionRate = radius * 2;
+    this.productionRate = radius/10;
   }
 
   @Override
@@ -108,8 +108,8 @@ public class Planet extends GameObject {
 
   //Production d'un vaisseau dans la planète
   public void productionSpaceship(){  
-  	nbSpaceship++;
-  	power += Spaceship.attackPower;
+  	nbSpaceship+= this.productionRate;
+  	power = this.nbSpaceship * Spaceship.attackPower;
   }
   
   //Création d'un vaisseau pour décollage
@@ -118,9 +118,10 @@ public class Planet extends GameObject {
 		  power -= Spaceship.attackPower*squad.getSpaceships().size();
   }*/
   
+  //Création d'un vaisseau pour décollage
   public void creationSpaceship(){
 	  nbSpaceship --;
-	  power -= Spaceship.attackPower;
+	  power = this.nbSpaceship*Spaceship.attackPower;
 }
   
   public boolean onPlanet(double x, double y){
