@@ -1,7 +1,6 @@
 package basic;
 
 import java.util.ArrayList;
-import java.util.Objects;
 import javafx.scene.paint.Color;
 
 public class Player {
@@ -36,7 +35,8 @@ public class Player {
       return false;
     }
     Player player = (Player) o;
-    return Objects.equals(color, player.color);
+    return color.equals(player.color)
+        && this.type == player.type;
   }
 
   public enum PlayerType {

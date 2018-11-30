@@ -7,7 +7,7 @@ public class ImageSprite extends Sprite {
 
   private Image image;
 
-  public ImageSprite(Image image, double x, double y, int z) {
+  public ImageSprite(Image image, int x, int y, int z) {
     super(x, y, z);
     this.image = image;
   }

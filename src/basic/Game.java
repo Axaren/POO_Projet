@@ -1,9 +1,7 @@
 package basic;
 
-import basic.Player.PlayerType;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
+import java.util.Random;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.event.EventHandler;
@@ -13,18 +11,16 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 
 public class Game extends Application {
-	
+
   private Player player1, player2;
 
   private final static int WIDTH = 800;
   private final static int HEIGHT = 600;
+  private final static int NB_PLANETS = 10;
+  private final static int MIN_PLANET_DISTANCE = 50;
 
   private Image background;
   private ArrayList<GameObject> objects;
@@ -32,7 +28,11 @@ public class Game extends Application {
   
   private int cpt;
   
-  public static String getRessourcePathByName(String name) {
+  /**
+   * @param name File path
+   * @return Complete file path of the ressource
+   */
+  private static String getRessourcePathByName(String name) {
     return Game.class.getResource('/' + name).toString();
   }
 
@@ -51,24 +51,14 @@ public class Game extends Application {
     root.getChildren().add(canvas);
 
     GraphicsContext gc = canvas.getGraphicsContext2D();
-    gc.setFont(Font.font("Helvetica", FontWeight.BOLD, 24));
-    gc.setFill(Color.RED);
-    gc.setStroke(Color.RED);
-    gc.setLineWidth(1);
 
     background = new Image(getRessourcePathByName("images/space.jpg"), WIDTH, HEIGHT, false, false);
-    Planet planet1 = new Planet(100, 200, 200);
-    Planet planet2 = new Planet(100, 300, 300);
-
-    objects = new ArrayList<>();
-    objects.add(planet1);
-    objects.add(planet2);
-    
-    planets = new ArrayList<>();
-    planets.add(planet1);
-    planets.add(planet2);
 
     cpt = 0;
+    
+    objects = new ArrayList<>();
+    planets = new ArrayList<>();
+    generatePlanets();
 
     stage.setScene(scene);
     stage.show();
@@ -87,20 +77,53 @@ public class Game extends Application {
     });
 
     new AnimationTimer() {
-      public void handle(long arg0) {
+
+      private long previousTime;
+      private double planetProductionAcc;
+
+      public void handle(long now) {
+        double delta = now - previousTime / 1_000_000_000.0;
+        planetProductionAcc += delta;
         gc.drawImage(background, 0, 0);
-        cpt++; 
-        
-        if(cpt%100==0){
-            Collections.sort(planets);
-            planets.forEach( p -> p.productionSpaceship());
-        }
-
-
-        Collections.sort(objects);
         objects.forEach(s -> s.render(gc));
 
+        previousTime = now;
+      }
+
+      @Override
+      public void start() {
+        previousTime = System.nanoTime();
+        planetProductionAcc = 0;
+        super.start();
       }
     }.start();
+  }
+
+  public void generatePlanets() {
+    Random random = new Random();
+    for (int i = 0; i < NB_PLANETS; i++) {
+      int radius = random.nextInt(Planet.MAX_RADIUS - Planet.MIN_RADIUS) + Planet.MIN_RADIUS;
+      int xPos = random.nextInt(WIDTH - radius * 2) + radius;
+      int yPos = random.nextInt(HEIGHT - radius * 2) + radius;
+      boolean isIllegal = false;
+      Planet newPlanet = new Planet(radius, xPos, yPos);
+      for (Planet p : planets) {
+        double distance = Math.sqrt(
+            ((xPos - p.getSprite().x) * (xPos - p.getSprite().x)) + ((yPos - p.getSprite().y) * (
+                yPos - p.getSprite().y)));
+        distance -= radius + p.getRadius();
+        if (distance < MIN_PLANET_DISTANCE) {
+          i--;
+          isIllegal = true;
+          break;
+        }
+
+      }
+
+      if (!isIllegal) {
+        planets.add(newPlanet);
+        objects.add(newPlanet);
+      }
+    }
   }
 }
