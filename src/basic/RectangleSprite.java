@@ -22,4 +22,10 @@ public class RectangleSprite extends Sprite {
     gc.setStroke(color);
     gc.fillRect(x, y, width, height);
   }
+
+  @Override
+  public boolean contains(int x, int y) {
+    return x > this.x && x < this.x + width
+        && y < this.y && y > this.y + height;
+  }
 }

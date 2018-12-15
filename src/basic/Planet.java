@@ -1,7 +1,5 @@
 package basic;
 
-import java.util.ArrayList;
-
 import com.sun.javafx.tk.FontMetrics;
 import com.sun.javafx.tk.Toolkit;
 import javafx.scene.canvas.GraphicsContext;
@@ -27,14 +25,15 @@ public class Planet extends GameObject {
     super(new CircleSprite(xPos, yPos, 0, radius, player.getColor()));
     this.player = player;
     this.nbSpaceship = 0;
-    this.productionRate = radius * 2;
+    this.productionRate = radius;
   }
 
-  public Planet(int radius, int xPos, int yPos) {
+  public Planet(int radius, int xPos, int yPos, int nbSpaceship) {
     super(new CircleSprite(xPos, yPos, 0, radius, DEFAULT_COLOR));
     this.player = null;
-    this.nbSpaceship = 0;
-    this.productionRate = radius * 2;
+    this.nbSpaceship = nbSpaceship;
+    this.power = nbSpaceship * Spaceship.attackPower;
+    this.productionRate = radius;
   }
 
   @Override
@@ -63,7 +62,6 @@ public class Planet extends GameObject {
   public Color getColor() {
     return ((CircleSprite) sprite).getColor();
   }
-
 
 
   public int getNbSpaceship() {
@@ -124,10 +122,8 @@ public class Planet extends GameObject {
 }
   
   public boolean onPlanet(double x, double y){
-	  if(x > sprite.x && x < sprite.x+ this.getRadius() && y > sprite.y && y < sprite.y+this.getRadius())
-		  return true;
-	  else
-		  return false;
+    return x > sprite.x && x < sprite.x + this.getRadius() && y > sprite.y && y < sprite.y + this
+        .getRadius();
   }
   
   

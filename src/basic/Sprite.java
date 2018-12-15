@@ -35,6 +35,8 @@ public abstract class Sprite implements Comparable<Sprite> {
 
   public abstract void render(GraphicsContext gc);
 
+  public abstract boolean contains(int x, int y);
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {

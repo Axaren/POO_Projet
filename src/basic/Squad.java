@@ -5,6 +5,11 @@ import java.util.ArrayList;
 public class Squad {
 
   private ArrayList<Spaceship> spaceships;
+
+  public Planet getDestination() {
+    return destination;
+  }
+
   private Planet destination;
 
   public Squad(ArrayList<Spaceship> spaceships, Planet destination) {

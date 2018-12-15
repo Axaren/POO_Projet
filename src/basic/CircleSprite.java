@@ -32,4 +32,9 @@ public class CircleSprite extends Sprite {
     gc.setFill(paint);
     gc.fillOval(x - radius, y - radius, radius * 2, radius * 2);
   }
+
+  @Override
+  public boolean contains(int x, int y) {
+    return Math.sqrt((x - this.x) * (x - this.x) + (y - this.y) * (y - this.y)) <= radius;
+  }
 }

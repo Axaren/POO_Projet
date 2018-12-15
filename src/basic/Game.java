@@ -1,6 +1,7 @@
 package basic;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
@@ -23,8 +24,9 @@ public class Game extends Application {
   private final static int MIN_PLANET_DISTANCE = 50;
 
   private Image background;
-  private ArrayList<GameObject> objects;
   private ArrayList<Planet> planets;
+  private ArrayList<Spaceship> spaceships;
+  private List<List<Node>> map;
   
   private int cpt;
   
@@ -55,10 +57,14 @@ public class Game extends Application {
     background = new Image(getRessourcePathByName("images/space.jpg"), WIDTH, HEIGHT, false, false);
 
     cpt = 0;
-    
-    objects = new ArrayList<>();
+
     planets = new ArrayList<>();
     generatePlanets();
+    map = mapToGrid();
+    PathFinder pathFinder = new PathFinder();
+    //List<Node> pathFound = pathFinder.findPath(map,map.get(0).get(0),map);
+    //pathFinder.printPath(map,pathFound);
+
 
     stage.setScene(scene);
     stage.show();
@@ -85,9 +91,11 @@ public class Game extends Application {
         double delta = now - previousTime / 1_000_000_000.0;
         planetProductionAcc += delta;
         gc.drawImage(background, 0, 0);
-        objects.forEach(s -> s.render(gc));
-
         previousTime = now;
+        planets.forEach(p -> p.render(gc));
+        for (List<Node> line : map) {
+          line.forEach(node -> node.render(gc));
+        }
       }
 
       @Override
@@ -101,12 +109,14 @@ public class Game extends Application {
 
   public void generatePlanets() {
     Random random = new Random();
+    int failedTries = 0;
     for (int i = 0; i < NB_PLANETS; i++) {
       int radius = random.nextInt(Planet.MAX_RADIUS - Planet.MIN_RADIUS) + Planet.MIN_RADIUS;
       int xPos = random.nextInt(WIDTH - radius * 2) + radius;
       int yPos = random.nextInt(HEIGHT - radius * 2) + radius;
+      int nbSpaceships = random.nextInt(radius) + radius;
       boolean isIllegal = false;
-      Planet newPlanet = new Planet(radius, xPos, yPos);
+      Planet newPlanet = new Planet(radius, xPos, yPos, nbSpaceships);
       for (Planet p : planets) {
         double distance = Math.sqrt(
             ((xPos - p.getSprite().x) * (xPos - p.getSprite().x)) + ((yPos - p.getSprite().y) * (
@@ -115,15 +125,43 @@ public class Game extends Application {
         if (distance < MIN_PLANET_DISTANCE) {
           i--;
           isIllegal = true;
+          failedTries++;
+          if (failedTries > 5) {
+            return;
+          }
           break;
+        } else {
+          failedTries = 0;
         }
 
       }
 
       if (!isIllegal) {
         planets.add(newPlanet);
-        objects.add(newPlanet);
       }
     }
+  }
+
+  public List<List<Node>> mapToGrid() {
+    int nodeColumnsNumber = 30;
+    int nodeLinesNumber = 25;
+
+    int nodesHorizontalDistance = WIDTH / nodeColumnsNumber;
+    int nodesVerticalDistance = HEIGHT / nodeLinesNumber;
+
+    List<List<Node>> map = new ArrayList<>(nodeColumnsNumber * nodeLinesNumber);
+
+    for (int y = 0; y < HEIGHT; y += nodesVerticalDistance) {
+      List<Node> column = new ArrayList<>(nodeLinesNumber);
+      for (int x = 0; x < WIDTH; x += nodesHorizontalDistance) {
+        int finalX = x;
+        int finalY = y;
+        boolean blocked = planets.stream()
+            .anyMatch(planet -> planet.getSprite().contains(finalX, finalY));
+        column.add(new Node(x, y, blocked));
+      }
+      map.add(column);
+    }
+    return map;
   }
 }

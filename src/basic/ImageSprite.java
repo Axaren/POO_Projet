@@ -16,4 +16,9 @@ public class ImageSprite extends Sprite {
   public void render(GraphicsContext gc) {
     gc.drawImage(image, x, y);
   }
+
+  @Override
+  public boolean contains(int x, int y) {
+    return false;
+  }
 }

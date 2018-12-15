@@ -4,20 +4,16 @@ package basic;
 public class Spaceship {
 
   static double speed = 10;
-  private double creationTime;
+  static double creationTime = 1;
   static int attackPower = 1;
-  private RectangleSprite sprite;
+  private Squad squad;
 
-  public Spaceship(double creationTime) {
-    this.creationTime = creationTime;
+  public Spaceship(Squad squad) {
+    this.squad = squad;
   }
 
-  public double getCreationTime() {
-    return creationTime;
-  }
-
-  public void setCreationTime(double creationTime) {
-    this.creationTime = creationTime;
+  public Planet getDestination() {
+    return squad.getDestination();
   }
 
 }
