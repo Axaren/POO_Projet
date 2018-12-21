@@ -5,8 +5,6 @@ import basic.Squad;
 import basic.pathfinding.PathFinder;
 import basic.sprites.CircleSprite;
 import basic.sprites.Sprite;
-import com.sun.javafx.tk.FontMetrics;
-import com.sun.javafx.tk.Toolkit;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -182,7 +180,6 @@ public class Planet extends GameObject {
     int fontSizeRange = MAX_FONT_SIZE - MIN_FONT_SIZE;
     int fontSize = (((getRadius() - MIN_RADIUS) * fontSizeRange) / radiusRange) + MIN_FONT_SIZE;
     Font powerFont = Font.font("Helvetica", FontWeight.NORMAL, fontSize);
-    FontMetrics fm = Toolkit.getToolkit().getFontLoader().getFontMetrics(powerFont);
     gc.setFont(powerFont);
     gc.setFill(Color.WHITE);
     gc.setStroke(Color.WHITE);
