@@ -1,9 +1,12 @@
-package basic.pathfinding;
+package src_basic.pathfinding;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.PriorityQueue;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
 
 
 /**
@@ -12,7 +15,7 @@ import java.util.PriorityQueue;
  *
  * Adapted from https://github.com/BlueWalker/Pathfinding
  */
-public class PathFinder {
+public class PathFinder implements Serializable {
 
   private List<List<Node>> map;
 
@@ -238,6 +241,20 @@ public class PathFinder {
       node = node.getParent();
     }
     return path;
+  }
+
+  public void renderMap(GraphicsContext gc) {
+    for (List<Node> row : map) {
+      for (Node node : row) {
+        node.render(gc);
+      }
+    }
+  }
+
+  public void renderPath(GraphicsContext gc, List<Node> path) {
+    for (Node node : path) {
+      node.renderPath(gc, Color.BLACK);
+    }
   }
 
   /**

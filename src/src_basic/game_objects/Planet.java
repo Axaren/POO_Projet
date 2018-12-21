@@ -1,22 +1,23 @@
-package basic.game_objects;
+package src_basic.game_objects;
 
-import basic.Player;
-import basic.Squad;
-import basic.pathfinding.PathFinder;
-import basic.sprites.CircleSprite;
-import basic.sprites.Sprite;
+import java.io.Serializable;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
+import src_basic.Player;
+import src_basic.Squad;
+import src_basic.pathfinding.PathFinder;
+import src_basic.sprites.CircleSprite;
+import src_basic.sprites.Sprite;
 
 /**
  * Represents a planet in the game
  *
- * @see basic.game_objects.GameObject
+ * @see src_basic.game_objects.GameObject
  */
-public class Planet extends GameObject {
+public class Planet extends GameObject implements Serializable {
 
   /**
    * DEFAULT_COLOR is the color of neutral planets
@@ -28,7 +29,6 @@ public class Planet extends GameObject {
   private final static int MAX_FONT_SIZE = 20;
 
   private int nbSpaceship;
-  private int power;
   private Player player;
   private int productionRate;
 
@@ -44,7 +44,6 @@ public class Planet extends GameObject {
     this.player = null;
     this.productionRate = radius / 10;
     this.nbSpaceship = nbSpaceship;
-    this.power = this.nbSpaceship * Spaceship.ATTACK_POWER;
     this.productionRate = radius;
   }
 
@@ -59,7 +58,6 @@ public class Planet extends GameObject {
     Planet planet = (Planet) o;
     return getRadius() == planet.getRadius() &&
         nbSpaceship == planet.nbSpaceship &&
-        power == planet.power &&
         productionRate == planet.productionRate &&
         (player == null && planet.player == null || (player != null && player
             .equals(planet.player)))
@@ -88,20 +86,13 @@ public class Planet extends GameObject {
     this.nbSpaceship = nbSpaceship;
   }
 
-  public int getPower() {
-    return power;
-  }
-
-  public void setPower(int power) {
-    this.power = power;
-  }
-
   public Player getPlayer() {
     return player;
   }
 
   /**
    * Sets the planet's player and changes its color to match the player's
+   *
    * @param player a player in the game
    */
   public void setPlayer(Player player) {
@@ -122,11 +113,11 @@ public class Planet extends GameObject {
   }
 
   /**
-   *
    * @param percentage percentage of spaceships to deploy
    * @param destination the target of the attack
-   * @param pathFinder the pathfinder Object used to calculate the path of the spaceships in the map
-   * @see basic.pathfinding.PathFinder
+   * @param pathFinder the pathfinder Object used to calculate the path of the spaceships in the
+   * map
+   * @see src_basic.pathfinding.PathFinder
    */
   public void createSquad(int percentage, Planet destination, PathFinder pathFinder) {
     int newSquadSize = nbSpaceship * percentage / 100;
@@ -136,6 +127,7 @@ public class Planet extends GameObject {
 
   /**
    * Checks if a point is contained in the planet
+   *
    * @param x coordinate
    * @param y coordinate
    * @return true if the point at (x,y) is contained in the planet
@@ -144,18 +136,27 @@ public class Planet extends GameObject {
     return sprite.contains(x, y);
   }
 
-
   /**
    * Produces spaceships each tick
    */
   @Override
   public void update() {
     nbSpaceship += this.productionRate / Spaceship.CREATION_TIME;
-    power = this.nbSpaceship * Spaceship.ATTACK_POWER;
+  }
+
+  @Override
+  public String toString() {
+    return "Planet{" +
+        sprite.toString() +
+        ",nbSpaceship=" + nbSpaceship +
+        "," + player.toString() +
+        ", productionRate=" + productionRate +
+        '}';
   }
 
   /**
    * Renders the planet on the screen and displays its current power
+   *
    * @param gc The GraphicsContext of the canvas
    * @see javafx.scene.canvas.GraphicsContext
    */
@@ -170,8 +171,9 @@ public class Planet extends GameObject {
   }
 
   /**
-   * Displays the current planet's power at its center.
-   * Adapts the font size with the planet's radius
+   * Displays the current planet's power at its center. Adapts the font size with the planet's
+   * radius
+   *
    * @param gc The GraphicsContext of the Canvas
    * @see javafx.scene.canvas.GraphicsContext
    */
@@ -185,10 +187,11 @@ public class Planet extends GameObject {
     gc.setStroke(Color.WHITE);
     gc.setTextAlign(TextAlignment.CENTER);
     gc.setLineWidth(1);
-    int textXPos = sprite.getX();
-    int textYPos = sprite.getY();
-    gc.fillText(String.valueOf(power), textXPos, textYPos, getRadius());
-    gc.strokeText(String.valueOf(power), textXPos, textYPos);
+    double textXPos = sprite.getX();
+    double textYPos = sprite.getY();
+    gc.fillText(String.valueOf(nbSpaceship * Spaceship.ATTACK_POWER), textXPos, textYPos,
+        getRadius());
+    gc.strokeText(String.valueOf(nbSpaceship * Spaceship.ATTACK_POWER), textXPos, textYPos);
   }
 
   /**
@@ -200,10 +203,11 @@ public class Planet extends GameObject {
 
   /**
    * Moves the spaceship in the planet if it's an ally.
+   *
    * @param spaceship the landing spaceship
    */
   public void onLanding(Spaceship spaceship) {
-    if (spaceship.getColor() == player.getColor()) {
+    if (player != null && spaceship.getColor() == player.getColor()) {
       nbSpaceship++;
     } else {
       onAttack();

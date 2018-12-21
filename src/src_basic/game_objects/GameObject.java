@@ -1,28 +1,36 @@
-package basic.game_objects;
+package src_basic.game_objects;
 
-import basic.sprites.Sprite;
+import java.io.Serializable;
 import javafx.scene.canvas.GraphicsContext;
+import src_basic.sprites.Sprite;
 
 /**
  * This class is used to define a displayable object in the game.
  */
 
-public abstract class GameObject implements Comparable<GameObject> {
+public abstract class GameObject implements Comparable<GameObject>, Serializable {
 
   Sprite sprite;
 
-  public Sprite getSprite() {
-    return sprite;
-  }
-
   public GameObject(Sprite sprite) {
     this.sprite = sprite;
+  }
+
+  public Sprite getSprite() {
+    return sprite;
   }
 
   /**
    * Used to update a GameObject's state
    */
   public abstract void update();
+
+  @Override
+  public String toString() {
+    return "GameObject{" +
+        sprite.toString() +
+        '}';
+  }
 
   /**
    * Displays the GameObject on the screen
@@ -32,9 +40,9 @@ public abstract class GameObject implements Comparable<GameObject> {
   public abstract void render(GraphicsContext gc);
 
   /**
-   * @see Sprite compareTo for more details
    * @param gameObject an other GameObject
    * @return An integer representing the relative order when compared to gameObject
+   * @see Sprite compareTo for more details
    */
   @Override
   public int compareTo(GameObject gameObject) {

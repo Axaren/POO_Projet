@@ -1,17 +1,18 @@
-package basic.game_objects;
+package src_basic.game_objects;
 
-import basic.Squad;
-import basic.pathfinding.Graph;
-import basic.pathfinding.Node;
-import basic.sprites.RectangleSprite;
+import java.io.Serializable;
 import java.util.LinkedList;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import src_basic.Squad;
+import src_basic.pathfinding.Graph;
+import src_basic.pathfinding.Node;
+import src_basic.sprites.RectangleSprite;
 
 /**
  * Represents a Spaceship in the game
  */
-public class Spaceship extends GameObject {
+public class Spaceship extends GameObject implements Serializable {
 
   /**
    * As there is only 1 type of spaceship all stats are fixed and common to all spaceships
@@ -21,16 +22,18 @@ public class Spaceship extends GameObject {
   public final static int ATTACK_POWER = 1;
   public final static int HEIGHT = 10;
   public final static int WIDTH = 10;
-
   private Squad squad;
-  private LinkedList<Node> path;
+  private transient LinkedList<Node> path;
   private int nextNodeRemainingDistance;
-
 
   public Spaceship(int x, int y, Color color, Squad squad, LinkedList<Node> path) {
     super(new RectangleSprite(x, y, 0, WIDTH, HEIGHT, color));
     this.squad = squad;
-    this.path = path;
+    this.path = new LinkedList<>(path);
+  }
+
+  public Squad getSquad() {
+    return squad;
   }
 
   public void setPath(LinkedList<Node> path) {
@@ -50,27 +53,36 @@ public class Spaceship extends GameObject {
 
   /**
    * Updates the spaceship position and follows its assigned path. Changes its course each time it
-   * reaches a new checkpoint in its path.
+   * reaches a new checkpoint and removes the current destination. Notifies the destination planet
+   * when it reaches it.
    */
   @Override
   public void update() {
     if (squad != null) {
       updatePosition();
       nextNodeRemainingDistance -= Spaceship.SPEED;
-      if (nextNodeRemainingDistance <= 0) {
+      if (!path.isEmpty() && nextNodeRemainingDistance <= 0) {
         Node currentNode = path.removeFirst();
         if (!path.isEmpty()) {
           Node nextNode = path.peek();
           nextNodeRemainingDistance = currentNode.distanceTo(nextNode);
-          double newAngle = Math.atan2(sprite.getY() - Graph.getRealNodeY(nextNode),
-              sprite.getX() - Graph.getRealNodeX(nextNode));
-          sprite.setSpeed((int) (Spaceship.SPEED * Math.cos(newAngle)),
-              (int) (Spaceship.SPEED * Math.sin(newAngle)));
+          double newAngle = Math.atan2(Graph.getRealNodeY(nextNode) - sprite.getY(),
+              Graph.getRealNodeX(nextNode) - sprite.getX());
+          sprite.setSpeed((Spaceship.SPEED * Math.cos(newAngle)),
+              (Spaceship.SPEED * Math.sin(newAngle)));
         } else {
           onDestinationReached();
         }
       }
     }
+  }
+
+  @Override
+  public String toString() {
+    return "Spaceship{" +
+        squad.toString() +
+        ", nextNodeRemainingDistance=" + nextNodeRemainingDistance +
+        '}';
   }
 
   @Override
@@ -84,12 +96,15 @@ public class Spaceship extends GameObject {
    */
   private void onDestinationReached() {
     squad.getDestination().onLanding(this);
-    squad.remove(this);
     squad = null;
   }
 
   public Color getColor() {
     return ((RectangleSprite) sprite).getColor();
+  }
+
+  public void setColor(Color color) {
+    ((RectangleSprite) sprite).setColor(color);
   }
 
 }

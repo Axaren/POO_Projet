@@ -1,4 +1,4 @@
-package basic.pathfinding;
+package src_basic.pathfinding;
 
 /**
  * Static class containing information on the grid map of the game, aswell as useful methods to
@@ -17,11 +17,11 @@ public class Graph {
     return node.getY() * NODE_VERTICAL_DISTANCE;
   }
 
-  public static int getGraphX(int x) {
+  public static double getGraphX(double x) {
     return x / NODE_HORIZONTAL_DISTANCE;
   }
 
-  public static int getGraphY(int y) {
+  public static double getGraphY(double y) {
     return y / NODE_VERTICAL_DISTANCE;
   }
 

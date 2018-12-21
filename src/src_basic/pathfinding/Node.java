@@ -1,5 +1,6 @@
-package basic.pathfinding;
+package src_basic.pathfinding;
 
+import java.io.Serializable;
 import java.util.Objects;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
@@ -13,7 +14,7 @@ import javafx.scene.paint.Color;
  *
  * Adapted from https://github.com/BlueWalker/Pathfinding
  */
-public class Node implements Comparable<Node> {
+public class Node implements Comparable<Node>, Serializable {
 
   private final int x;
   private final int y;
@@ -90,20 +91,6 @@ public class Node implements Comparable<Node> {
         blocked == node.blocked;
   }
 
-  /**
-   * Displays a square representing the node
-   * Changes its color according to its blocked attribute
-   * @param gc The GraphicsContext of the canvas
-   */
-  public void render(GraphicsContext gc) {
-    if (blocked) {
-      gc.setFill(Color.RED);
-    } else {
-      gc.setFill(Color.WHITE);
-    }
-    gc.fillRect(Graph.getRealNodeX(this), Graph.getRealNodeY(this), 2, 2);
-  }
-
   @Override
   public String toString() {
     return "Node{" +
@@ -116,11 +103,26 @@ public class Node implements Comparable<Node> {
   }
 
   /**
+   * Displays a square representing the node Changes its color according to its blocked attribute
+   *
+   * @param gc The GraphicsContext of the canvas
+   */
+  public void render(GraphicsContext gc) {
+    if (blocked) {
+      gc.setFill(Color.RED);
+    } else {
+      gc.setFill(Color.WHITE);
+    }
+    gc.fillRect(Graph.getRealNodeX(this), Graph.getRealNodeY(this), 2, 2);
+  }
+
+  /**
    * Renders the calculated path by rendering a line between this node and its parent
+   *
    * @param gc The GraphicsContext of the canvas
    * @param color Color of the line representign the calculated path
    */
-  public void render(GraphicsContext gc, Color color) {
+  public void renderPath(GraphicsContext gc, Color color) {
     render(gc);
     if (parent != null) {
       gc.strokeLine(Graph.getRealNodeX(parent), Graph.getRealNodeY(parent),
@@ -130,6 +132,7 @@ public class Node implements Comparable<Node> {
 
   /**
    * Compares this node to another with the sum of their g and h values
+   *
    * @param node another node
    * @return an int representing the relative order between this node and the other
    */
@@ -142,6 +145,7 @@ public class Node implements Comparable<Node> {
 
   /**
    * Calculates the pixel distance between this node and an other node.
+   *
    * @param other another node
    * @return the distance from this node to the other node in pixels
    */
