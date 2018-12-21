@@ -1,5 +1,10 @@
-package basic;
+package basic.game_objects;
 
+import basic.Player;
+import basic.Squad;
+import basic.pathfinding.PathFinder;
+import basic.sprites.CircleSprite;
+import basic.sprites.Sprite;
 import com.sun.javafx.tk.FontMetrics;
 import com.sun.javafx.tk.Toolkit;
 import javafx.scene.canvas.GraphicsContext;
@@ -10,9 +15,9 @@ import javafx.scene.text.TextAlignment;
 
 public class Planet extends GameObject {
 
-  static final Color DEFAULT_COLOR = Color.CHOCOLATE;
-  static final int MAX_RADIUS = 50;
-  static final int MIN_RADIUS = 25;
+  public static final Color DEFAULT_COLOR = Color.CHOCOLATE;
+  public static final int MAX_RADIUS = 50;
+  public static final int MIN_RADIUS = 25;
   private final static int MIN_FONT_SIZE = 8;
   private final static int MAX_FONT_SIZE = 20;
 
@@ -25,14 +30,15 @@ public class Planet extends GameObject {
     super(new CircleSprite(xPos, yPos, 0, radius, player.getColor()));
     this.player = player;
     this.nbSpaceship = 0;
-    this.productionRate = radius;
+    this.productionRate = radius / 10;
   }
 
   public Planet(int radius, int xPos, int yPos, int nbSpaceship) {
     super(new CircleSprite(xPos, yPos, 0, radius, DEFAULT_COLOR));
     this.player = null;
+    this.productionRate = radius / 10;
     this.nbSpaceship = nbSpaceship;
-    this.power = nbSpaceship * Spaceship.attackPower;
+    this.power = this.nbSpaceship * Spaceship.attackPower;
     this.productionRate = radius;
   }
 
@@ -88,10 +94,6 @@ public class Planet extends GameObject {
     this.player = player;
   }
 
-  public Sprite getSprite() {
-    return sprite;
-  }
-
   public void setSprite(Sprite sprite) {
     this.sprite = sprite;
   }
@@ -104,29 +106,23 @@ public class Planet extends GameObject {
     this.productionRate = productionRate;
   }
 
-  //Production d'un vaisseau dans la planète
-  public void productionSpaceship(){  
-  	nbSpaceship++;
-  	power += Spaceship.attackPower;
+  public void createSquad(int percentage, Planet destination, PathFinder pathFinder) {
+    int newSquadSize = nbSpaceship * percentage / 100;
+    Squad newSquad = new Squad(this, destination, newSquadSize, pathFinder);
+    player.addSquad(newSquad);
   }
-  
-  //Création d'un vaisseau pour décollage
-  /*public void creationSpaceship(Squad squad){
-		  nbSpaceship -= squad.getSpaceships().size();
-		  power -= Spaceship.attackPower*squad.getSpaceships().size();
-  }*/
-  
-  public void creationSpaceship(){
-	  nbSpaceship --;
-	  power -= Spaceship.attackPower;
-}
-  
-  public boolean onPlanet(double x, double y){
-    return x > sprite.x && x < sprite.x + this.getRadius() && y > sprite.y && y < sprite.y + this
-        .getRadius();
+
+  public boolean onPlanet(int x, int y) {
+    return sprite.contains(x, y);
   }
-  
-  
+
+
+  @Override
+  public void update() {
+    nbSpaceship += this.productionRate / Spaceship.creationTime;
+    power = this.nbSpaceship * Spaceship.attackPower;
+  }
+
   @Override
   public void render(GraphicsContext gc) {
     renderPlanet(gc);
@@ -148,9 +144,19 @@ public class Planet extends GameObject {
     gc.setStroke(Color.WHITE);
     gc.setTextAlign(TextAlignment.CENTER);
     gc.setLineWidth(1);
-    int textXPos = sprite.x;
-    int textYPos = sprite.y;
+    int textXPos = sprite.getX();
+    int textYPos = sprite.getY();
     gc.fillText(String.valueOf(power), textXPos, textYPos, getRadius());
     gc.strokeText(String.valueOf(power), textXPos, textYPos);
+  }
+
+  public void onAttack() {
+    nbSpaceship -= Spaceship.attackPower;
+  }
+
+  public void onLanding(Spaceship spaceship) {
+    if (spaceship.getColor() == player.getColor()) {
+      nbSpaceship++;
+    }
   }
 }

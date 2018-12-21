@@ -1,4 +1,4 @@
-package basic;
+package basic.sprites;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
@@ -10,6 +10,11 @@ public class ImageSprite extends Sprite {
   public ImageSprite(Image image, int x, int y, int z) {
     super(x, y, z);
     this.image = image;
+  }
+
+  public ImageSprite(ImageSprite imageSprite) {
+    super(imageSprite);
+    this.image = imageSprite.image;
   }
 
   @Override

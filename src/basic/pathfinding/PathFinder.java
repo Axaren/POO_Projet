@@ -1,7 +1,7 @@
-package basic;
+package basic.pathfinding;
 
-import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.PriorityQueue;
 
@@ -12,16 +12,25 @@ import java.util.PriorityQueue;
  */
 public class PathFinder {
 
+  private List<List<Node>> map;
+
+  public PathFinder(List<List<Node>> map) {
+    this.map = map;
+  }
+
+  public List<List<Node>> getMap() {
+    return map;
+  }
+
   /**
    * Returns a List representing the path between two nodes in a two-dimensional search space.
    *
-   * @param map a 2D list holding all of the Nodes that describe the space
    * @param start the start node for the path search and must inherit from Node
    * @param dest the destination node for the path search and must inherit from Node
    * @return the List of nodes in the path starting from the start node and ending with the dest
    * node
    */
-  public List<Node> findPath(List<List<Node>> map, Node start, Node dest) {
+  public List<Node> findPath(Node start, Node dest) {
     HashSet<Node> closedSet = new HashSet<>();
     PriorityQueue<Node> openQueue = new PriorityQueue<>();
 
@@ -54,19 +63,18 @@ public class PathFinder {
 
               // If the neighbor can be walked through and has not been visited
               // directly, then check to see if the neighbor's values can be updated.
-              //if(!closedSet.contains(neighbor) && neighbor.walkable()) {
               if (!closedSet.contains(neighbor) && !neighbor.isBlocked()) {
                 // If the neighbor has not been added to the priority queue,
                 // then set its parent node to null and its G value to "infinity".
                 if (!openQueue.contains(neighbor)) {
                   neighbor.setParent(null);
-                  neighbor.setG(Double.POSITIVE_INFINITY);
+                  neighbor.setG(Integer.MAX_VALUE);
                   neighbor.setH(distanceBetweenNodes(neighbor, dest));
                 }
 
                 double oldG = neighbor.getG();
                 // Determine which of the two paths are the best option
-                computeBestPath(map, node, neighbor);
+                computeBestPath(node, neighbor);
                 if (neighbor.getG() < oldG) {
                   // If the neighbor is in the open queue, then remove it and
                   // add it again, so that it can be sorted in the right place,
@@ -91,8 +99,8 @@ public class PathFinder {
    * @param node the current node being visited in the path search
    * @param neighbor a neighbor of node
    */
-  private void computeBestPath(List<List<Node>> map, Node node, Node neighbor) {
-    if (node.getParent() != null && lineOfSight(map, node.getParent(), neighbor)) {
+  private void computeBestPath(Node node, Node neighbor) {
+    if (node.getParent() != null && lineOfSight(node.getParent(), neighbor)) {
       int parentNeighborDistance = distanceBetweenNodes(node.getParent(), neighbor);
 
       if (node.getParent().getG() + parentNeighborDistance < neighbor.getG()) {
@@ -111,12 +119,11 @@ public class PathFinder {
   /**
    * Returns true if the two nodes are within line of sight of one another, false otherwise.
    *
-   * @param map a 2D list holding all of the Nodes that describe the space
    * @param a first node
    * @param b second node
    * @return Returns a boolean for whether or not the two nodes are in line of sight of one another.
    */
-  private boolean lineOfSight(List<List<Node>> map, Node a, Node b) {
+  private boolean lineOfSight(Node a, Node b) {
     int xA = a.getX();
     int yA = a.getY();
     int xB = b.getX();
@@ -200,15 +207,8 @@ public class PathFinder {
    * @return an int representing the approximate distance between the two nodes
    */
   private int distanceBetweenNodes(Node a, Node b) {
-    int xDelta = b.getX() - a.getX();
-    int yDelta = b.getY() - a.getY();
-    // Calculate absolute value because distance is always positive.
-    if (xDelta < 0) {
-      xDelta = -xDelta;
-    }
-    if (yDelta < 0) {
-      yDelta = -yDelta;
-    }
+    int xDelta = Math.abs(b.getX() - a.getX());
+    int yDelta = Math.abs(b.getY() - a.getY());
     return (int) (10 * Math.sqrt(xDelta + yDelta));
   }
 
@@ -222,11 +222,12 @@ public class PathFinder {
    * and the dest node at the tail
    */
   private List<Node> reconstructPath(Node start, Node dest) {
-    List<Node> path = new ArrayList<>();
+    LinkedList<Node> path = new LinkedList<>();
     Node node = dest;
 
     while (true) {
-      path.add(0, node);
+      path.addFirst(node);
+      System.out.println(node.toString());
 
       if (node == start) {
         break;
@@ -239,16 +240,14 @@ public class PathFinder {
 
   /**
    * Prints the given search area in an easy-to-view format.
-   *
-   * @param map a 2D list holding all of the Nodes that describe the space
    */
-  public void printMap(List<List<Node>> map) {
+  public void printMap() {
     for (int i = 0; i < map.size(); i++) {
       for (int j = 0; j < map.get(0).size(); j++) {
         if (!map.get(i).get(j).isBlocked()) {
-          System.out.print('X');
-        } else {
           System.out.print('O');
+        } else {
+          System.out.print('X');
         }
       }
       System.out.println();
@@ -258,10 +257,9 @@ public class PathFinder {
   /**
    * Prints the search area along with the given path in an easy-to-view format.
    *
-   * @param map a 2D list holding all of the Nodes that describe the space
    * @param path the path that is printed over the search area
    */
-  public void printPath(List<List<Node>> map, List<Node> path) {
+  public void printPath(List<Node> path) {
     if (path == null) {
       System.out.println("No path.");
     } else {
@@ -280,7 +278,7 @@ public class PathFinder {
         if (i == 0) {
           printedPath[path.get(i).getY()][path.get(i).getX()] = 'S';
         } else if (i == path.size() - 1) {
-          printedPath[path.get(i).getY()][path.get(i).getX()] = 'E';
+          printedPath[path.get(i).getY()][path.get(i).getX()] = 'D';
         } else {
           printedPath[path.get(i).getY()][path.get(i).getX()] = 'P';
         }

@@ -1,5 +1,6 @@
 package basic;
 
+import basic.game_objects.Planet;
 import java.util.ArrayList;
 import javafx.scene.paint.Color;
 
@@ -7,8 +8,6 @@ public class Player {
 
   private Color color;
   private PlayerType type;
-  private ArrayList<Planet> controlledPlanets;
-  private ArrayList<Squad> controlledSquads;
 
   public Player(Color color, PlayerType type, Planet startPlanet) {
     this.color = color;
@@ -16,6 +15,15 @@ public class Player {
     this.controlledPlanets = new ArrayList<>(1);
     this.controlledPlanets.add(startPlanet);
     this.controlledSquads = new ArrayList<>();
+
+    startPlanet.setPlayer(this);
+  }
+
+  private ArrayList<Planet> controlledPlanets;
+  private ArrayList<Squad> controlledSquads;
+
+  public ArrayList<Planet> getControlledPlanets() {
+    return controlledPlanets;
   }
 
   public Color getColor() {
@@ -37,6 +45,10 @@ public class Player {
     Player player = (Player) o;
     return color.equals(player.color)
         && this.type == player.type;
+  }
+
+  public void addSquad(Squad newSquad) {
+    controlledSquads.add(newSquad);
   }
 
   public enum PlayerType {

@@ -1,4 +1,4 @@
-package basic;
+package basic.sprites;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
@@ -7,6 +7,14 @@ public class RectangleSprite extends Sprite {
 
   private int width;
   private int height;
+
+  public RectangleSprite(RectangleSprite rectangleSprite) {
+    super(rectangleSprite);
+    this.width = rectangleSprite.width;
+    this.height = rectangleSprite.height;
+    this.color = rectangleSprite.color;
+  }
+
   private Color color;
 
   public RectangleSprite(int x, int y, int z, int width, int height, Color color) {
@@ -14,6 +22,10 @@ public class RectangleSprite extends Sprite {
     this.width = width;
     this.height = height;
     this.color = color;
+  }
+
+  public Color getColor() {
+    return color;
   }
 
   @Override

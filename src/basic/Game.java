@@ -1,5 +1,13 @@
 package basic;
 
+import basic.Player.PlayerType;
+import basic.game_objects.GameObject;
+import basic.game_objects.Planet;
+import basic.game_objects.Spaceship;
+import basic.pathfinding.Graph;
+import basic.pathfinding.Node;
+import basic.pathfinding.PathFinder;
+import basic.sprites.CircleSprite;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -12,24 +20,27 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 public class Game extends Application {
 
-  private Player player1, player2;
-
   private final static int WIDTH = 800;
   private final static int HEIGHT = 600;
-  private final static int NB_PLANETS = 10;
+  private final static int NB_PLANETS = 20;
   private final static int MIN_PLANET_DISTANCE = 50;
-
+  private ArrayList<Player> players;
   private Image background;
+  private ArrayList<GameObject> objects;
   private ArrayList<Planet> planets;
-  private ArrayList<Spaceship> spaceships;
-  private List<List<Node>> map;
-  
+
+
+  private ArrayList<Squad> squads;
+  private PathFinder pathFinder;
+
   private int cpt;
-  
+  private int percentage;
+
   /**
    * @param name File path
    * @return Complete file path of the ressource
@@ -57,27 +68,31 @@ public class Game extends Application {
     background = new Image(getRessourcePathByName("images/space.jpg"), WIDTH, HEIGHT, false, false);
 
     cpt = 0;
+    percentage = 0;
 
+    objects = new ArrayList<>();
     planets = new ArrayList<>();
-    generatePlanets();
-    map = mapToGrid();
-    PathFinder pathFinder = new PathFinder();
-    //List<Node> pathFound = pathFinder.findPath(map,map.get(0).get(0),map);
-    //pathFinder.printPath(map,pathFound);
+    squads = new ArrayList<>();
+    players = new ArrayList<>();
 
+    generatePlanets();
+    Player player1 = new Player(Color.BLUE, PlayerType.HUMAN, planets.get(0));
+    players.add(player1);
+    generateGrid();
+    //squads.add(new Squad(player1.getControlledPlanets().get(0),planets.get(5),1,pathFinder));
 
     stage.setScene(scene);
     stage.show();
 
     EventHandler<MouseEvent> mouseHandler = (e -> {
-    	for(Planet p : planets)
-    		if(p.onPlanet(e.getX(), e.getY())){
-				p.creationSpaceship();
-    		}
+      //planets.stream().filter(p -> p.onPlanet((int)e.getX(),(int)e.getY())).findFirst()
+      // .ifPresent(planet -> planet.createSquad(TODO: pass origin, destination, pathfinder));
     });
 
     scene.setOnMouseDragged(mouseHandler);
     scene.setOnMousePressed(mouseHandler);
+
+    scene.setOnScroll(e -> percentage++);
 
     scene.setOnKeyPressed(e -> {
     });
@@ -88,14 +103,33 @@ public class Game extends Application {
       private double planetProductionAcc;
 
       public void handle(long now) {
-        double delta = now - previousTime / 1_000_000_000.0;
+        double delta = (now - previousTime) / 1_000_000_000.0;
         planetProductionAcc += delta;
         gc.drawImage(background, 0, 0);
+        objects.forEach(s -> s.render(gc));
+
+        if (planetProductionAcc >= 0.5) {
+          for (Squad squad : squads) {
+            squad.getSpaceships().forEach(Spaceship::update);
+          }
+        }
+
+        for (Squad squad : squads) {
+          squad.getSpaceships().forEach(spaceship -> spaceship.render(gc));
+        }
+
+        if (planetProductionAcc >= 0.5) {
+          for (Planet p : planets) {
+            if (p.getPlayer() != null) {
+              p.update();
+            }
+          }
+          planetProductionAcc = 0;
+        }
+
         previousTime = now;
         planets.forEach(p -> p.render(gc));
-        for (List<Node> line : map) {
-          line.forEach(node -> node.render(gc));
-        }
+
       }
 
       @Override
@@ -119,8 +153,9 @@ public class Game extends Application {
       Planet newPlanet = new Planet(radius, xPos, yPos, nbSpaceships);
       for (Planet p : planets) {
         double distance = Math.sqrt(
-            ((xPos - p.getSprite().x) * (xPos - p.getSprite().x)) + ((yPos - p.getSprite().y) * (
-                yPos - p.getSprite().y)));
+            ((xPos - p.getSprite().getX()) * (xPos - p.getSprite().getX())) + (
+                (yPos - p.getSprite().getY()) * (
+                    yPos - p.getSprite().getY())));
         distance -= radius + p.getRadius();
         if (distance < MIN_PLANET_DISTANCE) {
           i--;
@@ -142,26 +177,27 @@ public class Game extends Application {
     }
   }
 
-  public List<List<Node>> mapToGrid() {
-    int nodeColumnsNumber = 30;
-    int nodeLinesNumber = 25;
+  private void generateGrid() {
+    int nbLines = HEIGHT / Graph.NODE_VERTICAL_DISTANCE;
+    int nbColumns = WIDTH / Graph.NODE_HORIZONTAL_DISTANCE;
+    List<List<Node>> map = new ArrayList<>(nbLines * nbColumns);
 
-    int nodesHorizontalDistance = WIDTH / nodeColumnsNumber;
-    int nodesVerticalDistance = HEIGHT / nodeLinesNumber;
-
-    List<List<Node>> map = new ArrayList<>(nodeColumnsNumber * nodeLinesNumber);
-
-    for (int y = 0; y < HEIGHT; y += nodesVerticalDistance) {
-      List<Node> column = new ArrayList<>(nodeLinesNumber);
-      for (int x = 0; x < WIDTH; x += nodesHorizontalDistance) {
-        int finalX = x;
-        int finalY = y;
-        boolean blocked = planets.stream()
-            .anyMatch(planet -> planet.getSprite().contains(finalX, finalY));
+    for (int y = 0; y < nbLines; y++) {
+      List<Node> column = new ArrayList<>();
+      for (int x = 0; x < nbColumns; x++) {
+        int finalX = x * Graph.NODE_HORIZONTAL_DISTANCE;
+        int finalY = y * Graph.NODE_VERTICAL_DISTANCE;
+        boolean blocked = planets.stream().anyMatch(planet -> {
+          CircleSprite biggerPlanetSprite = new CircleSprite((CircleSprite) planet.getSprite());
+          biggerPlanetSprite.setRadius(
+              planet.getRadius() + Spaceship.width >= Spaceship.height ? Spaceship.width
+                  : Spaceship.height);
+          return biggerPlanetSprite.contains(finalX, finalY);
+        });
         column.add(new Node(x, y, blocked));
       }
       map.add(column);
     }
-    return map;
+    pathFinder = new PathFinder(map);
   }
 }

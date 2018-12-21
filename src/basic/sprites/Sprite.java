@@ -1,16 +1,31 @@
-package basic;
+package basic.sprites;
 
 import javafx.scene.canvas.GraphicsContext;
 
 public abstract class Sprite implements Comparable<Sprite> {
 
 
-  protected int x;
-  protected int y;
-  private int z;
+  int x;
+  int y;
+  int z;
+
+  public Sprite(Sprite sprite) {
+    this.x = sprite.x;
+    this.y = sprite.y;
+    this.z = sprite.z;
+    this.xSpeed = sprite.xSpeed;
+    this.ySpeed = sprite.ySpeed;
+  }
+
+  public int getX() {
+    return x;
+  }
   private int xSpeed;
   private int ySpeed;
 
+  public int getY() {
+    return y;
+  }
 
   public Sprite(int x, int y, int z) {
     this.x = x;
