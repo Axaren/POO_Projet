@@ -69,6 +69,10 @@ public class Planet extends GameObject {
     return ((CircleSprite) sprite).getColor();
   }
 
+  public void setColor(Color color) {
+    ((CircleSprite) sprite).setColor(color);
+  }
+
 
   public int getNbSpaceship() {
     return nbSpaceship;
@@ -92,6 +96,7 @@ public class Planet extends GameObject {
 
   public void setPlayer(Player player) {
     this.player = player;
+    setColor(player.getColor());
   }
 
   public void setSprite(Sprite sprite) {

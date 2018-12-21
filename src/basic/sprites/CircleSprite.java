@@ -9,6 +9,11 @@ import javafx.scene.paint.Stop;
 public class CircleSprite extends Sprite {
 
   private int radius;
+
+  public void setColor(Color color) {
+    this.color = color;
+  }
+
   private Color color;
   public CircleSprite(int x, int y, int z, int radius, Color color) {
     super(x, y, z);
