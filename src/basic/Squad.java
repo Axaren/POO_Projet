@@ -45,8 +45,8 @@ public class Squad {
   }
 
   private Node getSquadStartNode(int originX, int originY, double takeOffAngle) {
-    int xOffset = (int) (origin.getRadius() * Spaceship.width * 2 * Math.cos(takeOffAngle));
-    int yOffset = (int) (origin.getRadius() * Spaceship.height * 2 * Math.sin(takeOffAngle));
+    int xOffset = (int) (origin.getRadius() * Spaceship.WIDTH * 2 * Math.cos(takeOffAngle));
+    int yOffset = (int) (origin.getRadius() * Spaceship.HEIGHT * 2 * Math.sin(takeOffAngle));
     int startNodeX = Graph.getGraphX(originX + xOffset);
     int startNodeY = Graph.getGraphY(originY + yOffset);
     return pathFinder.getMap().get(startNodeY).get(startNodeX);

@@ -190,8 +190,8 @@ public class Game extends Application {
         boolean blocked = planets.stream().anyMatch(planet -> {
           CircleSprite biggerPlanetSprite = new CircleSprite((CircleSprite) planet.getSprite());
           biggerPlanetSprite.setRadius(
-              planet.getRadius() + Spaceship.width >= Spaceship.height ? Spaceship.width
-                  : Spaceship.height);
+              planet.getRadius() + Spaceship.WIDTH >= Spaceship.HEIGHT ? Spaceship.WIDTH
+                  : Spaceship.HEIGHT);
           return biggerPlanetSprite.contains(finalX, finalY);
         });
         column.add(new Node(x, y, blocked));

@@ -9,6 +9,8 @@ import java.util.PriorityQueue;
 /**
  * This class can be used to find a path between two nodes in a given two-dimensional list of
  * nodes.
+ *
+ * Adapted from https://github.com/BlueWalker/Pathfinding
  */
 public class PathFinder {
 

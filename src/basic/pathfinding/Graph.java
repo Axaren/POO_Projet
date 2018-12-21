@@ -1,5 +1,9 @@
 package basic.pathfinding;
 
+/**
+ * Static class containing information on the grid map of the game, aswell as useful methods to
+ * convert between grid and pixel coordinates.
+ */
 public class Graph {
 
   public static int NODE_HORIZONTAL_DISTANCE = 4;

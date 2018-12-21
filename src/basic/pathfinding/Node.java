@@ -4,6 +4,15 @@ import java.util.Objects;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
+/**
+ * Represents a Node in the Grid representing the game map. Holds x y coordinates relative to the
+ * grid. blocked : true if the node is blocked by something, used when calculating line of sights
+ * and paths. parent : used to reconstruct the path found between two nodes. g : distance from the
+ * starting node in a path to this node h : distance from this node to the destination node in a
+ * path.
+ *
+ * Adapted from https://github.com/BlueWalker/Pathfinding
+ */
 public class Node implements Comparable<Node> {
 
   private final int x;
@@ -81,13 +90,18 @@ public class Node implements Comparable<Node> {
         blocked == node.blocked;
   }
 
-  public void render(GraphicsContext gc, int horizontalDistance, int verticalDistance) {
+  /**
+   * Displays a square representing the node
+   * Changes its color according to its blocked attribute
+   * @param gc The GraphicsContext of the canvas
+   */
+  public void render(GraphicsContext gc) {
     if (blocked) {
       gc.setFill(Color.RED);
     } else {
       gc.setFill(Color.WHITE);
     }
-    gc.fillRect(x * horizontalDistance, y * verticalDistance, 2, 2);
+    gc.fillRect(Graph.getRealNodeX(this), Graph.getRealNodeY(this), 2, 2);
   }
 
   @Override
@@ -101,20 +115,24 @@ public class Node implements Comparable<Node> {
         '}';
   }
 
-  public void render(GraphicsContext gc, int horizontalDistance, int verticalDistance,
-      Color color) {
-    if (blocked) {
-      gc.setFill(color.brighter());
-    } else {
-      gc.setFill(color);
-    }
-    gc.fillRect(x * horizontalDistance, y * verticalDistance, 1, 1);
+  /**
+   * Renders the calculated path by rendering a line between this node and its parent
+   * @param gc The GraphicsContext of the canvas
+   * @param color Color of the line representign the calculated path
+   */
+  public void render(GraphicsContext gc, Color color) {
+    render(gc);
     if (parent != null) {
-      gc.strokeLine(parent.x * horizontalDistance, parent.y * verticalDistance,
-          x * horizontalDistance, y * verticalDistance);
+      gc.strokeLine(Graph.getRealNodeX(parent), Graph.getRealNodeY(parent),
+          Graph.getRealNodeX(this), Graph.getRealNodeY(this));
     }
   }
 
+  /**
+   * Compares this node to another with the sum of their g and h values
+   * @param node another node
+   * @return an int representing the relative order between this node and the other
+   */
   @Override
   public int compareTo(Node node) {
     double f = this.h + this.g;
@@ -122,6 +140,11 @@ public class Node implements Comparable<Node> {
     return Double.compare(f, anotherF);
   }
 
+  /**
+   * Calculates the pixel distance between this node and an other node.
+   * @param other another node
+   * @return the distance from this node to the other node in pixels
+   */
   public int distanceTo(Node other) {
     int realX = Graph.getRealNodeX(this);
     int realY = Graph.getRealNodeY(this);
