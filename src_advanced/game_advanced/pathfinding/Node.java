@@ -1,4 +1,4 @@
-package src_basic.pathfinding;
+package game_advanced.pathfinding;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -6,11 +6,11 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
 /**
- * Represents a Node in the Grid representing the game map. Holds x y coordinates relative to the
- * grid. blocked : true if the node is blocked by something, used when calculating line of sights
- * and paths. parent : used to reconstruct the path found between two nodes. g : distance from the
- * starting node in a path to this node h : distance from this node to the destination node in a
- * path.
+ * Represents a Node in the Grid representing the game_basic map. Holds x y coordinates relative to
+ * the grid. blocked : true if the node is blocked by something, used when calculating line of
+ * sights and paths. parent : used to reconstruct the path found between two nodes. g : distance
+ * from the starting node in a path to this node h : distance from this node to the destination node
+ * in a path.
  *
  * Adapted from https://github.com/BlueWalker/Pathfinding
  */
@@ -113,7 +113,8 @@ public class Node implements Comparable<Node>, Serializable {
     } else {
       gc.setFill(Color.WHITE);
     }
-    gc.fillRect(Graph.getRealNodeX(this), Graph.getRealNodeY(this), 2, 2);
+    gc.fillRect(game_advanced.pathfinding.Graph.getRealNodeX(this),
+        game_advanced.pathfinding.Graph.getRealNodeY(this), 2, 2);
   }
 
   /**
@@ -125,8 +126,10 @@ public class Node implements Comparable<Node>, Serializable {
   public void renderPath(GraphicsContext gc, Color color) {
     render(gc);
     if (parent != null) {
-      gc.strokeLine(Graph.getRealNodeX(parent), Graph.getRealNodeY(parent),
-          Graph.getRealNodeX(this), Graph.getRealNodeY(this));
+      gc.strokeLine(game_advanced.pathfinding.Graph.getRealNodeX(parent),
+          game_advanced.pathfinding.Graph.getRealNodeY(parent),
+          game_advanced.pathfinding.Graph.getRealNodeX(this),
+          game_advanced.pathfinding.Graph.getRealNodeY(this));
     }
   }
 
@@ -150,9 +153,9 @@ public class Node implements Comparable<Node>, Serializable {
    * @return the distance from this node to the other node in pixels
    */
   public int distanceTo(Node other) {
-    int realX = Graph.getRealNodeX(this);
-    int realY = Graph.getRealNodeY(this);
-    int otherX = Graph.getRealNodeX(other);
+    int realX = game_advanced.pathfinding.Graph.getRealNodeX(this);
+    int realY = game_advanced.pathfinding.Graph.getRealNodeY(this);
+    int otherX = game_advanced.pathfinding.Graph.getRealNodeX(other);
     int otherY = Graph.getRealNodeY(other);
 
     return (int) Math.sqrt(

@@ -1,8 +1,8 @@
 Auteurs : DAYRE Florian, LESNE Nathan
 
 Mode d’emploi : (si javafx est dans le path)
-Compilation : javac Game.java
-Exécution : java Game
+Compilation : javac game_basic.Game.java
+Exécution : java game_basic.Game
 
 Règles du jeu : 
 
@@ -21,6 +21,6 @@ L’algorithme implémenté est Theta* (L’implémentation est adaptée de ce d
 
 Améliorations/Fonctionalités manquantes:
 
-Le décollage des vaisseaux n'est pas optimal/correct, des bugs persistent sur le pathfinding (le vaisseau dévie du chemin).
+Le décollage des vaisseaux n'est pas optimal/correct, des bugs persistent sur le game_basic.pathfinding (le vaisseau dévie du chemin).
 Aucune IA n'est présente sur le jeu.
 Plusieurs types de vaisseaux/planètes.

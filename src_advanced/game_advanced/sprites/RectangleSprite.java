@@ -1,43 +1,36 @@
-package src_basic.sprites;
+package game_advanced.sprites;
 
 import java.io.Serializable;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
-import src_basic.SerializableColor;
 
 /**
  * This class is used to represent a Sprite with a rectangular shape
  */
-public class RectangleSprite extends Sprite implements Serializable {
+public class RectangleSprite extends ShapeSprite implements Serializable {
 
   private int width;
   private int height;
 
-  private transient Color color;
-  private SerializableColor serializableColor;
   public RectangleSprite(RectangleSprite rectangleSprite) {
     super(rectangleSprite);
     this.width = rectangleSprite.width;
     this.height = rectangleSprite.height;
     this.color = rectangleSprite.color;
-    this.serializableColor = new SerializableColor(color);
   }
 
-  public RectangleSprite(int x, int y, int z, int width, int height, Color color) {
-    super(x, y, z);
+  public RectangleSprite(double x, double y, int z, int width, int height, Color color) {
+    super(x, y, z, color);
     this.width = width;
     this.height = height;
-    this.color = color;
-    this.serializableColor = new SerializableColor(color);
   }
 
-  public void setColor(Color color) {
-    this.color = color;
-    this.serializableColor.setColor(color);
+  public int getWidth() {
+    return width;
   }
 
-  public Color getColor() {
-    return color;
+  public int getHeight() {
+    return height;
   }
 
   @Override
@@ -70,5 +63,10 @@ public class RectangleSprite extends Sprite implements Serializable {
         ", y=" + y +
         ", z=" + z +
         '}';
+  }
+
+  @Override
+  public double getCircumscribedCircleRadius() {
+    return Math.sqrt(width * width + height * height) / 2;
   }
 }

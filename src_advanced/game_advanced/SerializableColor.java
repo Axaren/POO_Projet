@@ -1,4 +1,4 @@
-package src_basic;
+package game_advanced;
 
 import java.io.Serializable;
 import javafx.scene.paint.Color;

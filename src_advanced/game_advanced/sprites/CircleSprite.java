@@ -1,4 +1,4 @@
-package src_basic.sprites;
+package game_advanced.sprites;
 
 import java.io.Serializable;
 import javafx.scene.canvas.GraphicsContext;
@@ -6,29 +6,23 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
-import src_basic.SerializableColor;
 
 /**
  * This class is used to represent a Sprite that is circle shaped
  */
 
-public class CircleSprite extends Sprite implements Serializable {
+public class CircleSprite extends ShapeSprite implements Serializable {
 
   private int radius;
-  private transient Color color;
-  private SerializableColor serializableColor;
-  public CircleSprite(int x, int y, int z, int radius, Color color) {
-    super(x, y, z);
+
+  public CircleSprite(double x, double y, int z, int radius, Color color) {
+    super(x, y, z, color);
     this.radius = radius;
-    this.color = color;
-    serializableColor = new SerializableColor(color);
   }
 
   public CircleSprite(CircleSprite circleSprite) {
     super(circleSprite);
     this.radius = circleSprite.radius;
-    this.color = circleSprite.color;
-    this.serializableColor = new SerializableColor(color);
   }
 
   public int getRadius() {
@@ -37,15 +31,6 @@ public class CircleSprite extends Sprite implements Serializable {
 
   public void setRadius(int radius) {
     this.radius = radius;
-  }
-
-  public Color getColor() {
-    return color;
-  }
-
-  public void setColor(Color color) {
-    this.color = color;
-    this.serializableColor.setColor(color);
   }
 
   /**
@@ -82,5 +67,10 @@ public class CircleSprite extends Sprite implements Serializable {
         ", y=" + y +
         ", z=" + z +
         '}';
+  }
+
+  @Override
+  public double getCircumscribedCircleRadius() {
+    return radius;
   }
 }

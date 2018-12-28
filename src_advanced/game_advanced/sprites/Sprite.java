@@ -1,4 +1,4 @@
-package src_basic.sprites;
+package game_advanced.sprites;
 
 import java.io.Serializable;
 import javafx.scene.canvas.GraphicsContext;
@@ -9,8 +9,8 @@ import javafx.scene.canvas.GraphicsContext;
  */
 public abstract class Sprite implements Comparable<Sprite>, Serializable {
 
-  int x;
-  int y;
+  double x;
+  double y;
   int z;
   private double xSpeed;
   private double ySpeed;
@@ -23,31 +23,32 @@ public abstract class Sprite implements Comparable<Sprite>, Serializable {
     this.ySpeed = sprite.ySpeed;
   }
 
-  public Sprite(int x, int y, int z) {
+  public Sprite(double x, double y, int z) {
     this.x = x;
     this.y = y;
     this.z = z;
   }
 
-  public int getX() {
+  public double getX() {
     return x;
   }
 
-  public int getY() {
+  public double getY() {
     return y;
   }
 
-  public void setPosition(int x, int y) {
+  public void setPosition(double x, double y) {
     this.x = x;
     this.y = y;
   }
 
   /**
    * Updates the sprite's position according to its speed vector
+   * @param delta time since last update in seconds
    */
-  public void updatePosition() {
-    x += xSpeed;
-    y += ySpeed;
+  public void updatePosition(double delta) {
+    x += xSpeed * delta;
+    y += ySpeed * delta;
   }
 
   public void setSpeed(double xSpeed, double ySpeed) {

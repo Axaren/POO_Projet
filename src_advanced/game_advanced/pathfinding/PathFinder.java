@@ -1,4 +1,4 @@
-package src_basic.pathfinding;
+package game_advanced.pathfinding;
 
 import java.io.Serializable;
 import java.util.HashSet;
@@ -17,13 +17,13 @@ import javafx.scene.paint.Color;
  */
 public class PathFinder implements Serializable {
 
-  private List<List<Node>> map;
+  private List<List<game_advanced.pathfinding.Node>> map;
 
-  public PathFinder(List<List<Node>> map) {
+  public PathFinder(List<List<game_advanced.pathfinding.Node>> map) {
     this.map = map;
   }
 
-  public List<List<Node>> getMap() {
+  public List<List<game_advanced.pathfinding.Node>> getMap() {
     return map;
   }
 
@@ -35,9 +35,10 @@ public class PathFinder implements Serializable {
    * @return the List of nodes in the path starting from the start node and ending with the dest
    * node
    */
-  public List<Node> findPath(Node start, Node dest) {
-    HashSet<Node> closedSet = new HashSet<>();
-    PriorityQueue<Node> openQueue = new PriorityQueue<>();
+  public List<game_advanced.pathfinding.Node> findPath(
+      game_advanced.pathfinding.Node start, game_advanced.pathfinding.Node dest) {
+    HashSet<game_advanced.pathfinding.Node> closedSet = new HashSet<>();
+    PriorityQueue<game_advanced.pathfinding.Node> openQueue = new PriorityQueue<>();
 
     start.setParent(null);
     start.setG(0);
@@ -48,7 +49,7 @@ public class PathFinder implements Serializable {
     // destination node the path has been found).
     while (!openQueue.isEmpty()) {
 
-      Node node = openQueue.remove();
+      game_advanced.pathfinding.Node node = openQueue.remove();
 
       // If the destination node has been reached, then return the reconstructed path.
       if (node == dest) {
@@ -62,7 +63,7 @@ public class PathFinder implements Serializable {
         for (int j = -1; j < 2; j++) {
           if (i != 0 || j != 0) {
             try {
-              Node neighbor =
+              game_advanced.pathfinding.Node neighbor =
                   map.get(node.getY() + i).
                       get(node.getX() + j);
 
@@ -104,7 +105,8 @@ public class PathFinder implements Serializable {
    * @param node the current node being visited in the path search
    * @param neighbor a neighbor of node
    */
-  private void computeBestPath(Node node, Node neighbor) {
+  private void computeBestPath(game_advanced.pathfinding.Node node,
+      game_advanced.pathfinding.Node neighbor) {
     if (node.getParent() != null && lineOfSight(node.getParent(), neighbor)) {
       int parentNeighborDistance = distanceBetweenNodes(node.getParent(), neighbor);
 
@@ -128,7 +130,7 @@ public class PathFinder implements Serializable {
    * @param b second node
    * @return Returns a boolean for whether or not the two nodes are in line of sight of one another.
    */
-  private boolean lineOfSight(Node a, Node b) {
+  private boolean lineOfSight(game_advanced.pathfinding.Node a, game_advanced.pathfinding.Node b) {
     int xA = a.getX();
     int yA = a.getY();
     int xB = b.getX();
@@ -211,7 +213,8 @@ public class PathFinder implements Serializable {
    * @param b second node
    * @return an int representing the approximate distance between the two nodes
    */
-  private int distanceBetweenNodes(Node a, Node b) {
+  private int distanceBetweenNodes(game_advanced.pathfinding.Node a,
+      game_advanced.pathfinding.Node b) {
     int xDelta = Math.abs(b.getX() - a.getX());
     int yDelta = Math.abs(b.getY() - a.getY());
     return (int) (10 * Math.sqrt(xDelta + yDelta));
@@ -226,14 +229,13 @@ public class PathFinder implements Serializable {
    * @return Returns a List of Nodes, which are the path with the start node at the head of the List
    * and the dest node at the tail
    */
-  private List<Node> reconstructPath(Node start, Node dest) {
-    LinkedList<Node> path = new LinkedList<>();
-    Node node = dest;
+  private List<game_advanced.pathfinding.Node> reconstructPath(
+      game_advanced.pathfinding.Node start, game_advanced.pathfinding.Node dest) {
+    LinkedList<game_advanced.pathfinding.Node> path = new LinkedList<>();
+    game_advanced.pathfinding.Node node = dest;
 
     while (true) {
       path.addFirst(node);
-      System.out.println(node.toString());
-
       if (node == start) {
         break;
       }
@@ -244,15 +246,15 @@ public class PathFinder implements Serializable {
   }
 
   public void renderMap(GraphicsContext gc) {
-    for (List<Node> row : map) {
-      for (Node node : row) {
+    for (List<game_advanced.pathfinding.Node> row : map) {
+      for (game_advanced.pathfinding.Node node : row) {
         node.render(gc);
       }
     }
   }
 
-  public void renderPath(GraphicsContext gc, List<Node> path) {
-    for (Node node : path) {
+  public void renderPath(GraphicsContext gc, List<game_advanced.pathfinding.Node> path) {
+    for (game_advanced.pathfinding.Node node : path) {
       node.renderPath(gc, Color.BLACK);
     }
   }

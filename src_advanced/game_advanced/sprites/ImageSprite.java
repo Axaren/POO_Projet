@@ -1,4 +1,4 @@
-package src_basic.sprites;
+package game_advanced.sprites;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;

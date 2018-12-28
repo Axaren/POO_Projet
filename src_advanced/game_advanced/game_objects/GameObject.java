@@ -1,16 +1,16 @@
-package src_basic.game_objects;
+package game_advanced.game_objects;
 
+import game_advanced.sprites.Sprite;
 import java.io.Serializable;
 import javafx.scene.canvas.GraphicsContext;
-import src_basic.sprites.Sprite;
 
 /**
- * This class is used to define a displayable object in the game.
+ * This class is used to define a displayable object in the game_basic.
  */
 
 public abstract class GameObject implements Comparable<GameObject>, Serializable {
 
-  Sprite sprite;
+  protected Sprite sprite;
 
   public GameObject(Sprite sprite) {
     this.sprite = sprite;
@@ -22,8 +22,9 @@ public abstract class GameObject implements Comparable<GameObject>, Serializable
 
   /**
    * Used to update a GameObject's state
+   * @param delta
    */
-  public abstract void update();
+  public abstract void update(double delta);
 
   @Override
   public String toString() {
